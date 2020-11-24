@@ -33,7 +33,17 @@ variable "vpc_public_subnet_cidr" {
     default = "10.0.0.0/24"
 }
 
+variable "vpc_public_subnet_az" {
+    description = "Public Subnet Availabilty Zone based on region"
+    default = "us-east-1a"
+}
+
 variable "vpc_private_subnet_cidr" {
     description = "Private Subnet CIDR for internally accessible resources"
     default = "10.0.1.0/24"
+}
+
+variable "vpc_private_subnet_cidr" {
+    description = "Private Subnet Availabilty Zone based on region"
+    default = "us-east-1b"
 }
