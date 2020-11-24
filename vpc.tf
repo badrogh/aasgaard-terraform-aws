@@ -62,7 +62,7 @@ resource "aws_route_table" "vpc_public_sn_rt" {
 
 # Associate the routing table to public subnets
 resource "aws_route_table_association" "vpc_public_sn_rt_assn" {
-  subnet_id = aws_subnet.vpc_public_sn.id
+  subnet_id = aws_subnet.vpc_public_sn[count.index].id
   route_table_id = aws_route_table.vpc_public_sn_rt.id
 }
 
@@ -155,11 +155,11 @@ output "vpc_id" {
 }
 
 output "vpc_public_sn_id" {
-  value = aws_subnet.vpc_public_sn.id
+  value = aws_subnet.vpc_public_sn[count.index].id
 }
 
 output "vpc_private_sn_id" {
-  value = aws_subnet.vpc_private_sn.id
+  value = aws_subnet.vpc_private_sn[count.index].id
 }
 
 output "vpc_public_sg_id" {
