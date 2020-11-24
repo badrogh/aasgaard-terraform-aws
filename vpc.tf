@@ -5,9 +5,6 @@ provider "aws" {
   region = var.vpc_region
 }
 
-# Set availability zones based on region
-data "aws_availability_zones" "available" {}
-
 # Define a vpc
 resource "aws_vpc" "vpc_name" {
   cidr_block = var.vpc_cidr_block
@@ -26,25 +23,21 @@ resource "aws_internet_gateway" "vpc_ig" {
 
 # Public subnets
 resource "aws_subnet" "vpc_public_sn" {
-  count = length(data.aws_availability_zones.available.names)
   vpc_id = aws_vpc.vpc_name.id
-  cidr_block = var.vpc_public_subnet_1_cidr
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  cidr_block = var.vpc_public_subnet_cidr
   map_public_ip_on_launch = true
   tags = {
-    Name = "${var.vpc_name}-public-sn-az${count.index}"
+    Name = "${var.vpc_name}-public-sn"
   }
 }
 
 # Private subnets
 resource "aws_subnet" "vpc_private_sn" {
-  count = length(data.aws_availability_zones.available.names)
   vpc_id = aws_vpc.vpc_name.id
-  cidr_block = var.vpc_private_subnet_1_cidr
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  cidr_block = var.vpc_private_subnet_cidr
   map_public_ip_on_launch = false
   tags = {
-    Name = "${var.vpc_name}-private-sn-az${count.index}"
+    Name = "${var.vpc_name}-private-sn"
   }
 }
 
@@ -84,7 +77,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 0
     to_port = 0
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_1_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidr]
   }
 
   egress {
@@ -109,7 +102,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 11211
     to_port = 11211
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_1_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidr]
   }
 
   # allow redis port within VPC
@@ -117,7 +110,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 6379
     to_port = 6379
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_1_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidr]
   }
 
   # allow postgres port within VPC
@@ -125,7 +118,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 5432
     to_port = 5432
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_1_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidr]
   }
 
   # allow mysql port within VPC
@@ -133,7 +126,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 3306
     to_port = 3306
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_1_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidr]
   }
 
   egress {

@@ -28,12 +28,12 @@ variable "vpc_access_from_ip_range" {
     default = "0.0.0.0/0"
 }
 
-variable "vpc_public_subnet_1_cidr" {
+variable "vpc_public_subnet_cidr" {
     description = "Public Subnet CIDR for externally accessible resources"
     default = "10.0.0.0/24"
 }
 
-variable "vpc_private_subnet_1_cidr" {
+variable "vpc_private_subnet_cidr" {
     description = "Private Subnet CIDR for internally accessible resources"
     default = "10.0.1.0/24"
 }
