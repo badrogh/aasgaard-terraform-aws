@@ -8,7 +8,7 @@ provider "aws" {
 # Define a vpc
 resource "aws_vpc" "vpc_name" {
   cidr_block = var.vpc_cidr_block
-  tags {
+  tags = {
     Name = var.vpc_name
   }
 }
@@ -16,7 +16,7 @@ resource "aws_vpc" "vpc_name" {
 # Internet gateway for the public subnet
 resource "aws_internet_gateway" "demo_ig" {
   vpc_id = aws_vpc.vpc_name.id
-  tags {
+  tags = {
     Name = "demo_ig"
   }
 }
@@ -26,7 +26,7 @@ resource "aws_subnet" "vpc_public_sn" {
   vpc_id = aws_vpc.vpc_name.id
   cidr_block = var.vpc_public_subnet_1_cidr
   availability_zone = lookup(var.availability_zone, var.vpc_region)
-  tags {
+  tags = {
     Name = "vpc_public_sn"
   }
 }
@@ -36,7 +36,7 @@ resource "aws_subnet" "vpc_private_sn" {
   vpc_id = aws_vpc.vpc_name.id
   cidr_block = var.vpc_private_subnet_1_cidr
   availability_zone = "eu-west-2b"
-  tags {
+  tags = {
     Name = "vpc_private_sn"
   }
 }
@@ -48,7 +48,7 @@ resource "aws_route_table" "vpc_public_sn_rt" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.demo_ig.id
   }
-  tags {
+  tags = {
     Name = "vpc_public_sn_rt"
   }
 }
@@ -89,7 +89,7 @@ resource "aws_security_group" "vpc_public_sg" {
     cidr_blocks = [
       "0.0.0.0/0"]
   }
-  tags {
+  tags = {
     Name = "demo_pubic_sg"
   }
 }
@@ -142,7 +142,7 @@ resource "aws_security_group" "vpc_private_sg" {
     cidr_blocks = [
       "0.0.0.0/0"]
   }
-  tags {
+  tags = {
     Name = "demo_private_sg"
   }
 }
