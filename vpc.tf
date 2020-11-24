@@ -55,8 +55,7 @@ resource "aws_route_table" "vpc_public_sn_rt" {
 
 # Associate the routing table to public subnets
 resource "aws_route_table_association" "vpc_public_sn_rt_assn" {
-  count = length(data.aws_availability_zones.available.names)
-  subnet_id = aws_subnet.vpc_public_sn[count.index].id
+  subnet_id = aws_subnet.vpc_public_sn.id
   route_table_id = aws_route_table.vpc_public_sn_rt.id
 }
 
