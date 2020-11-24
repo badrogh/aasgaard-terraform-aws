@@ -18,15 +18,6 @@ variable "vpc_region" {
     default = "us-east-1"
 }
 
-variable "vpc_availability_zone" {
-    description = "AWS VPC region availability zone"
-    default = {
-        us-east-1 = "us-east-1a"
-        us-east-1 = "us-east-1b"
-        us-east-1 = "us-east-1c"
-    }
-}
-
 variable "vpc_cidr_block" {
     description = "AWS VPC CIDR block"
     default = "10.0.0.0/16"
