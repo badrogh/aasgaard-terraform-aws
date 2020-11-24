@@ -1,43 +1,48 @@
-# main creds for AWS connection
+# Credentials for AWS connection
 variable "AWS_ACCESS_KEY_ID" {
-  description = "AWS access key"
+    description = "AWS access key"
 }
 
 variable "AWS_SECRET_ACCESS_KEY" {
-  description = "AWS secret access key"
+    description = "AWS secret access key"
 }
 
-variable "availability_zone" {
-  description = "availability zone used for the demo, based on region"
-  default = {
-    eu-west-2 = "eu-west-2a"
-    eu-west-2 = "eu-west-2b"
-    eu-west-2 = "eu-west-2c"
-  }
-}
-
-########################### demo VPC Config ##################################
-
+# AWS VPC configuration
 variable "vpc_name" {
-  description = "VPC for Terraform provisioning demo"
+    description = "Terraformed AWS VPC"
+    default = ["demo-vpc"]
 }
 
 variable "vpc_region" {
-  description = "AWS region"
+    description = "AWS VPC region"
+    default = ["us-east-1"]
+}
+
+variable "vpc_availability_zone" {
+    description = "AWS VPC region availability zone"
+    default = {
+        us-east-1 = "us-east-1a"
+        us-east-1 = "us-east-1b"
+        us-east-1 = "us-east-1c"
+    }
 }
 
 variable "vpc_cidr_block" {
-  description = "Uber IP addressing for demo Network"
-}
-
-variable "vpc_public_subnet_1_cidr" {
-  description = "Public 0.0 CIDR for externally accessible subnet"
+    description = "AWS VPC CIDR block"
+    default = ["10.0.0.0/16"]
 }
 
 variable "vpc_access_from_ip_range" {
-  description = "Access can be made from the following IPs"
+    description = "VPC access can be made from these IPs"
+    default = ["0.0.0.0/0"]
+}
+
+variable "vpc_public_subnet_1_cidr" {
+    description = "Public Subnet CIDR for externally accessible resources"
+    default = ["10.0.0.0/24"]
 }
 
 variable "vpc_private_subnet_1_cidr" {
-  description = "Private CIDR for internally accessible subnet"
+    description = "Private Subnet CIDR for internally accessible resources"
+    default = ["10.0.1.0/24"]
 }
