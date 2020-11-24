@@ -1,9 +1,9 @@
 # main creds for AWS connection
-variable "aws_access_key_id" {
+variable "AWS_ACCESS_KEY_ID" {
   description = "AWS access key"
 }
 
-variable "aws_secret_access_key" {
+variable "AWS_SECRET_ACCESS_KEY" {
   description = "AWS secret access key"
 }
 
