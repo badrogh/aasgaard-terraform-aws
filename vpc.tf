@@ -46,7 +46,7 @@ resource "aws_route_table" "vpc_public_sn_rt" {
   vpc_id = aws_vpc.vpc_name.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.demo_ig.id
+    gateway_id = aws_internet_gateway.vpc_ig.id
   }
   tags = {
     Name = "${var.vpc_name}-rt"
