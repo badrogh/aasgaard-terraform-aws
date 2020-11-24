@@ -156,13 +156,11 @@ output "vpc_id" {
 }
 
 output "vpc_public_sn_id" {
-  count = length(data.aws_availability_zones.available.names)
-  value = aws_subnet.vpc_public_sn[count.index].id
+  value = aws_subnet.vpc_public_sn.id
 }
 
 output "vpc_private_sn_id" {
-  count = length(data.aws_availability_zones.available.names)
-  value = aws_subnet.vpc_private_sn[count.index].id
+  value = aws_subnet.vpc_private_sn.id
 }
 
 output "vpc_public_sg_id" {
