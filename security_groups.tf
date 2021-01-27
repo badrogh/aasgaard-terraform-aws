@@ -1,25 +1,77 @@
-# ECS Instance Security group
-resource "aws_security_group" "vpc_public_sg" {
-  name = "public-sg"
-  description = "Public access security group"
+# VPC Security Groups
+resource "aws_security_group" "centrify_connector_sg" {
+  name = "centrify_connector_sg"
+  description = "Centrify Connector security group"
   vpc_id = aws_vpc.vpc_name.id
 
   ingress {
-    from_port = 22
-    to_port = 22
+    # allow API Proxy port from VPC subnets
+	from_port = 8080
+    to_port = 8080
     protocol = "tcp"
-    cidr_blocks = [var.vpc_access_from_ip_range]
-  }
-
-  ingress {
-    from_port = 0
-    to_port = 0
-    protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr]
+    cidr_blocks = [aws_security_group.vpc_public_sg.id, aws_security_group.vpc_private_sg.id]
   }
 
   egress {
-    # allow all traffic to private SN
+    # allow all outbound traffic
+    from_port = "0"
+    to_port = "0"
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.vpc_name}-public-sg"
+  }
+}
+
+resource "aws_security_group" "vpc_public_sg" {
+  name = "public-sg"
+  description = "Public subnet security group"
+  vpc_id = aws_vpc.vpc_name.id
+
+  ingress {
+    # allow ICMP from Centrify Connectors
+    from_port = 0
+    to_port = 0
+    protocol = "icmp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+  }
+
+  ingress {
+    # allow SSH from Centrify Connectors
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+  }
+
+  ingress {
+    # allow RDP from Centrify Connectors
+    from_port = 3389
+    to_port = 3389
+    protocol = "tcp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+  }
+
+  ingress {
+    # allow WinRM-HTTP from Centrify Connectors
+    from_port = 5985
+    to_port = 5985
+    protocol = "tcp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+  }
+
+  ingress {
+    # allow WinRM-HTTPS from Centrify Connectors
+    from_port = 5986
+    to_port = 5986
+    protocol = "tcp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+  }
+
+  egress {
+    # allow all outbound traffic
     from_port = "0"
     to_port = "0"
     protocol = "-1"
@@ -36,39 +88,48 @@ resource "aws_security_group" "vpc_private_sg" {
   description = "Private ports accesss security group"
   vpc_id = aws_vpc.vpc_name.id
 
-  # allow memcached port within VPC
   ingress {
-    from_port = 11211
-    to_port = 11211
-    protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr]
+    # allow ICMP from Centrify Connectors
+    from_port = 0
+    to_port = 0
+    protocol = "icmp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
   }
 
-  # allow redis port within VPC
   ingress {
-    from_port = 6379
-    to_port = 6379
+    # allow SSH from Centrify Connectors
+    from_port = 22
+    to_port = 22
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr]
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
   }
 
-  # allow postgres port within VPC
   ingress {
-    from_port = 5432
-    to_port = 5432
+    # allow RDP from Centrify Connectors
+    from_port = 3389
+    to_port = 3389
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr]
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
   }
 
-  # allow mysql port within VPC
   ingress {
-    from_port = 3306
-    to_port = 3306
+    # allow WinRM-HTTP from Centrify Connectors
+    from_port = 5985
+    to_port = 5985
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr]
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+  }
+
+  ingress {
+    # allow WinRM-HTTPS from Centrify Connectors
+    from_port = 5986
+    to_port = 5986
+    protocol = "tcp"
+    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
   }
 
   egress {
+    # allow all outbound traffic
     from_port = "0"
     to_port = "0"
     protocol = "-1"
