@@ -9,7 +9,7 @@ resource "aws_security_group" "centrify_connector_sg" {
 	from_port = 8080
     to_port = 8080
     protocol = "tcp"
-    security_groups = [aws_security_group.vpc_public_sg.id, aws_security_group.vpc_private_sg.id]
+    security_groups = [aws_security_group.vpc_public_sg, aws_security_group.vpc_private_sg]
   }
 
   egress {
@@ -35,7 +35,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 0
     to_port = 0
     protocol = "icmp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -43,7 +43,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -51,7 +51,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 3389
     to_port = 3389
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -59,7 +59,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 5985
     to_port = 5985
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -67,7 +67,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 5986
     to_port = 5986
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   egress {
@@ -93,7 +93,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 0
     to_port = 0
     protocol = "icmp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -101,7 +101,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -109,7 +109,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 3389
     to_port = 3389
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -117,7 +117,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 5985
     to_port = 5985
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   ingress {
@@ -125,7 +125,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 5986
     to_port = 5986
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg]
   }
 
   egress {
