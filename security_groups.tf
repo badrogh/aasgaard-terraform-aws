@@ -35,7 +35,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 0
     to_port = 0
     protocol = "icmp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [${aws_security_group.centrify_connector_sg.id}]
   }
 
   ingress {
@@ -43,7 +43,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [${aws_security_group.centrify_connector_sg.id}]
   }
 
   ingress {
@@ -51,7 +51,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 3389
     to_port = 3389
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [${aws_security_group.centrify_connector_sg.id}]
   }
 
   ingress {
@@ -59,7 +59,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 5985
     to_port = 5985
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [${aws_security_group.centrify_connector_sg.id}]
   }
 
   ingress {
@@ -67,7 +67,7 @@ resource "aws_security_group" "vpc_public_sg" {
     from_port = 5986
     to_port = 5986
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [${aws_security_group.centrify_connector_sg.id}]
   }
 
   egress {
@@ -93,7 +93,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 0
     to_port = 0
     protocol = "icmp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [aws_security_group.centrify_connector_sg.id]
   }
 
   ingress {
@@ -101,7 +101,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 22
     to_port = 22
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [aws_security_group.centrify_connector_sg.id]
   }
 
   ingress {
@@ -109,7 +109,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 3389
     to_port = 3389
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [aws_security_group.centrify_connector_sg.id]
   }
 
   ingress {
@@ -117,7 +117,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 5985
     to_port = 5985
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [aws_security_group.centrify_connector_sg.id]
   }
 
   ingress {
@@ -125,7 +125,7 @@ resource "aws_security_group" "vpc_private_sg" {
     from_port = 5986
     to_port = 5986
     protocol = "tcp"
-    cidr_blocks = [aws_security_group.centrify_connector_sg.id]
+    source_security_group_id = [aws_security_group.centrify_connector_sg.id]
   }
 
   egress {
