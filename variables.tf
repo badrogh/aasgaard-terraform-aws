@@ -13,7 +13,7 @@ variable "vpc_name" {
     default = "demo-vpc"
 }
 
-variable "vpc_region" {
+variable "aws_region" {
     description = "AWS VPC region"
     default = "us-east-1"
 }
