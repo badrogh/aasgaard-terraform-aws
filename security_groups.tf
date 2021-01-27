@@ -9,7 +9,7 @@ resource "aws_security_group" "centrify_connector_sg" {
 	from_port = 8080
     to_port = 8080
     protocol = "tcp"
-    security_groups = [aws_security_group.vpc_public_sg, aws_security_group.vpc_private_sg]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
