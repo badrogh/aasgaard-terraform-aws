@@ -46,7 +46,7 @@ resource "aws_eip" "nat_private_ips" {
 
 ### NAT gateways
 resource "aws_nat_gateway" "nat_gw_private" {
-  depends_on = [aws_internet_gateway.vpc_ig]
+  depends_on = [aws_internet_gateway.vpc_igw]
   count = length(var.vpc_private_subnet_cidrs)
   allocation_id = element(aws_eip.nat_private_ips.*.id, count.index)
   subnet_id = element(aws_subnet.vpc_public_subnets.*.id, count.index)
