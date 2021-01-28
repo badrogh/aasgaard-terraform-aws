@@ -7,12 +7,16 @@ output "vpc_id" {
   value = aws_vpc.vpc_name.id
 }
 
-output "vpc_public_sn_id" {
-  value = aws_subnet.vpc_public_sn.id
+output "vpc_public_subnets.ids" {
+  value = aws_subnet.vpc_public_subnets.*.id
 }
 
-output "vpc_private_sn_id" {
-  value = aws_subnet.vpc_private_sn.id
+output "vpc_private_subnets.ids" {
+  value = aws_subnet.vpc_private_subnets.*.id
+}
+
+output "vpc_centrify_connector_sg_id" {
+  value = aws_security_group.centrify_connector_sg.id
 }
 
 output "vpc_public_sg_id" {
