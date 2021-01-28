@@ -2,9 +2,6 @@
 Write-Output "Running User Data Script"
 Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force -ErrorAction Ignore
 
-#net user Administrator "${admin_pass}"
-#wmic useraccount where "name='Administrator'" set PasswordExpires=FALSE
-
 # Prepare temp folder and start transcript
 mkdir C:\temp -Force | Out-Null
 mkdir -p 'C:\temp\Centrify\'
@@ -26,9 +23,8 @@ while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.
 	Write-Output "Waiting for installation to finish"
 	Start-Sleep -Seconds 10 
 }
-#Start-Sleep -Seconds 10
 
-Write-Output "Registering Centrify Connector against ${reg_url}"
+Write-Output "Registering Centrify Connector against ${tenant_url}"
 & 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe'  url=${tenant_url} regcode=${reg_code}
 
 Write-Output "Starting Centrify Connector service"
