@@ -5,9 +5,33 @@ resource "aws_security_group" "centrify_connector_sg" {
   vpc_id = aws_vpc.vpc_name.id
 
   ingress {
-    # allow API Proxy port from VPC subnets
+    # allow API Proxy calls from VPC subnets
 	from_port = 8080
     to_port = 8080
+    protocol = "tcp"
+    cidr_blocks = [vpc_public_subnet_cidr, vpc_private_subnet_cidr]
+  }
+
+  ingress {
+    # allow IWA Service from VPC subnets
+	from_port = 8433
+    to_port = 8433
+    protocol = "tcp"
+    cidr_blocks = [vpc_public_subnet_cidr, vpc_private_subnet_cidr]
+  }
+
+  ingress {
+    # allow SSH Gateway from anywhere
+	from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    # allow SSH Gateway from anywhere
+	from_port = 5555
+    to_port = 5555
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -32,7 +56,7 @@ resource "aws_security_group" "vpc_public_sg" {
 
   ingress {
     # allow ICMP from Centrify Connectors
-    from_port = 0
+    from_port = 8
     to_port = 0
     protocol = "icmp"
     security_groups = [aws_security_group.centrify_connector_sg.id]
@@ -90,7 +114,7 @@ resource "aws_security_group" "vpc_private_sg" {
 
   ingress {
     # allow ICMP from Centrify Connectors
-    from_port = 0
+    from_port = 8
     to_port = 0
     protocol = "icmp"
     security_groups = [aws_security_group.centrify_connector_sg.id]
