@@ -7,7 +7,7 @@ resource "aws_instance" "cfy_connector_instances" {
   instance_type = var.connector_instance_type
   
   # Network settings
-  subnet_id = element(local.vpc_private_subnets, count.index % 2)  
+  subnet_id = element(local.private_subnets, count.index % 2)  
   associate_public_ip_address = false
   vpc_security_group_ids = [aws_security_group.centrify_connector_sg.id, aws_security_group.vpc_private_sg.id]
   availability_zone = element(data.aws_availability_zones.available.names, count.index % 2)
