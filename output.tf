@@ -8,13 +8,11 @@ output "vpc_id" {
 }
 
 output "vpc_public_subnets_ids" {
-  count = length(var.vpc_public_subnets)
-  value = element(aws_subnet.vpc_public_subnets.*.id, count.index)
+  value = [aws_subnet.vpc_public_subnets.*.id]
 }
 
 output "vpc_private_subnets_ids" {
-  count = length(var.vpc_private_subnets)
-  value = element(aws_subnet.vpc_public_subnets.*.id, count.index)
+  value = [aws_subnet.vpc_public_subnets.*.id]
 }
 
 output "vpc_centrify_connector_sg_id" {
