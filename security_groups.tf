@@ -45,7 +45,7 @@ resource "aws_security_group" "centrify_connector_sg" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-public-sg"
+    Name = "${var.vpc_name}-centrify_connector_sg"
   }
 }
 
