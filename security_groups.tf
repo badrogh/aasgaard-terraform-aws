@@ -45,12 +45,12 @@ resource "aws_security_group" "centrify_connector_sg" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-centrify_connector_sg"
+    Name = "${var.vpc_name}-centrify-connector-sg"
   }
 }
 
 resource "aws_security_group" "vpc_public_sg" {
-  name = "public-sg"
+  name = "vpc_public_sg"
   description = "Public subnet security group"
   vpc_id = aws_vpc.vpc_name.id
 
@@ -108,7 +108,7 @@ resource "aws_security_group" "vpc_public_sg" {
 }
 
 resource "aws_security_group" "vpc_private_sg" {
-  name = "private-sg"
+  name = "vpc_private_sg"
   description = "Private ports accesss security group"
   vpc_id = aws_vpc.vpc_name.id
 

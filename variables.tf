@@ -1,4 +1,10 @@
-# Credentials for AWS connection
+### Input variables
+#
+
+### Credentials for AWS connection
+# Note that both AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY should always be variables set in your Terraform 
+# workspaces instead of using variables.tf file.
+# The AWS_SECRET_ACCESS_KEY should always be set as Sensitive (write only)
 variable "AWS_ACCESS_KEY_ID" {
     description = "AWS access key"
 }
@@ -7,9 +13,11 @@ variable "AWS_SECRET_ACCESS_KEY" {
     description = "AWS secret access key"
 }
 
-# AWS VPC configuration
+### AWS VPC configuration
+# You can edit default AWS region here 
+# You can edit or add CIDR blocks for both Public and Private subnets
 variable "vpc_name" {
-    description = "Terraformed AWS VPC"
+    description = "Demo VPC managed by Terraform"
     default = "demo-vpc"
 }
 
@@ -23,22 +31,42 @@ variable "vpc_cidr_block" {
     default = "10.0.0.0/16"
 }
 
-variable "vpc_public_subnet_cidr" {
-    description = "Public Subnet CIDR for externally accessible resources"
-    default = "10.0.0.0/24"
+variable "vpc_public_subnet_cidrs" {
+    description = "Public Subnets CIDR for externally accessible resources"
+    default = ["10.0.0.0/24", "10.0.1.0/24"]
 }
 
-variable "vpc_public_subnet_az" {
-    description = "Public Subnet Availabilty Zone based on region"
-    default = "us-east-1a"
+variable "vpc_private_subnet_cidrs" {
+    description = "Private Subnets CIDR for internally accessible resources"
+    default = ["10.0.10.0/24", "10.0.11.0/24"]
 }
 
-variable "vpc_private_subnet_cidr" {
-    description = "Private Subnet CIDR for internally accessible resources"
-    default = "10.0.1.0/24"
+### Centrify variable
+# Default values to use for Centrify Connector installation and enrolment
+# Values specific to your environment should be set in your Terraform workspace instead of editing this file.
+# The reg_code variable should always be set as Sensitive (write only)
+# Centrify Connector servers uses t2.micro instance type by default, this is only suitable for this demo,
+# for eval or production deployment you should edit instance type to suite your needs (t2.large is minimum recommended)
+#
+variable "package_url" {
+    description = "Centrify Connector Installer package download URL"
+    default = "https://edge.centrify.com/products/cloud-service/ProxyDownload/Centrify-Connector-Installer.zip"
 }
 
-variable "vpc_private_subnet_az" {
-    description = "Private Subnet Availabilty Zone based on region"
-    default = "us-east-1b"
+variable "tenant_url" {
+    description = "Centrify Platform tenant URL to use for enrolment"
+}
+
+variable "reg_code" {
+    description = "Registration code for Centrify Connector enrolment"
+}
+
+variable "connector_instance_type" {
+  description = "Instance type for Centrify Connector server"
+  default = "t2.micro"
+}
+
+variable "connector_disk_size" {
+  description = "Volume Size for Centrify Connector Machine EBS volume (default = 100)"
+  default     = "100"
 }
