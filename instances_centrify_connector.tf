@@ -1,12 +1,13 @@
 resource "aws_instance" "cfy_connector_instances" {
   depends_on = [aws_nat_gateway.nat_gw_private]
+  count = 2
   
   # Instance type
   ami = data.aws_ami.windows_ami.id
   instance_type = var.connector_instance_type
   
   # Network settings
-  subnet_id = element(local.private_subnets, count.index % 2)  
+  subnet_id = element(local.vpc_private_subnets, count.index % 2)  
   associate_public_ip_address = false
   vpc_security_group_ids = [aws_security_group.centrify_connector_sg.id, aws_security_group.vpc_private_sg.id]
   availability_zone = element(data.aws_availability_zones.available.names, count.index % 2)
@@ -19,7 +20,6 @@ resource "aws_instance" "cfy_connector_instances" {
 
   # Data
   user_data = data.template_file.centrify_connector_user_data_payload.rendered
-  count = 2
 
   root_block_device {
     volume_size           = var.connector_disk_size
