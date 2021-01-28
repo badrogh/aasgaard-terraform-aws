@@ -9,7 +9,7 @@ resource "aws_security_group" "centrify_connector_sg" {
 	from_port = 8080
     to_port = 8080
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr, var.vpc_private_subnet_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidrs, var.vpc_private_subnet_cidrs]
   }
 
   ingress {
@@ -17,7 +17,7 @@ resource "aws_security_group" "centrify_connector_sg" {
 	from_port = 8433
     to_port = 8433
     protocol = "tcp"
-    cidr_blocks = [var.vpc_public_subnet_cidr, var.vpc_private_subnet_cidr]
+    cidr_blocks = [var.vpc_public_subnet_cidrs, var.vpc_private_subnet_cidrs]
   }
 
   ingress {
