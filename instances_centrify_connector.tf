@@ -18,9 +18,6 @@ resource "aws_instance" "cfy_connector_instances" {
   get_password_data = true  
   source_dest_check = false
 
-  # Data
-  user_data = data.template_file.centrify_connector_user_data_payload.rendered
-
   root_block_device {
     volume_size           = var.connector_disk_size
     delete_on_termination = true
@@ -31,14 +28,9 @@ resource "aws_instance" "cfy_connector_instances" {
   }
 }
 
-data "template_file" "centrify_connector_user_data_payload" {
-  template = file(
-    "${path.module}/data/Install-CentrifyConnector.ps1.template",
-  )
-
-  vars = {
-    package_url   = var.package_url
-    tenant_url   = var.tenant_url
-    reg_code   = var.reg_code
+resource "null_ressource" "PowerShellScriptRunFirstTimeOnly" {
+  provisioner "local-exec" {
+    command = ".'${path.module}/data/Install-CentrifyConnector.ps1' -package_url ${var.package_url} -tenant_url ${var.tenant_url} -reg_code ${var.reg_code}"
+	interpreter = ["PowerShell", "-Command"]
   }
 }
