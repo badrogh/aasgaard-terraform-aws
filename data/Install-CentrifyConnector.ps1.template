@@ -21,10 +21,9 @@ Invoke-Expression "$installer /silent /norestart"
 $t = 0
 while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")) 
 { 
-	Write-Output ("Waiting {0}s for installation to finish" -f ($t += 10 ))
+	Write-Output ("Waiting for installation to finish... [{0:m\mss\s} elapsed]" -f [TimeSpan]::FromSeconds(10 * $t++))
 	Start-Sleep -Seconds 10 
 }
-Start-Sleep -Seconds 10 
 
 Write-Output "Registering Centrify Connector against ${tenant_url}"
 & 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe'  url=${tenant_url} regcode=${reg_code}
