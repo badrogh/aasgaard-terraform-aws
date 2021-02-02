@@ -30,7 +30,7 @@ resource "aws_instance" "cfy_connector_instances" {
 
 data "template_file" "centrify_connector" {
   template = file(
-    "${path.module}/../data/Install-CentrifyConnector.ps1.template",
+    "${path.module}/data/Install-CentrifyConnector.ps1.template",
   )
 
   vars = {
@@ -42,7 +42,7 @@ data "template_file" "centrify_connector" {
 
 resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
   provisioner "file" {
-    content = "${data.template_file.centrify_connector.rendered}"
+    content = data.template_file.centrify_connector.rendered
 	destination = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
   }
   
