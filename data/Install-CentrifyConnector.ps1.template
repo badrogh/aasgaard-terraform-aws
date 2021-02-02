@@ -18,11 +18,13 @@ $installer = (Get-ChildItem -Path C:\Temp\Centrify\*.exe -File).FullName
 Write-Output "Running Centrify Connector Installer"
 Invoke-Expression "$installer /silent"
 
+$t = 0
 while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")) 
 { 
-	Write-Output "Waiting for installation to finish"
+	Write-Output ("Waiting {0}s for installation to finish" -f ($t += 10 ))
 	Start-Sleep -Seconds 10 
 }
+Start-Sleep -Seconds 10 
 
 Write-Output "Registering Centrify Connector against ${tenant_url}"
 & 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe'  url=${tenant_url} regcode=${reg_code}
