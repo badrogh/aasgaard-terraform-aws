@@ -1,4 +1,4 @@
-resource "aws_instance" "cfy_connector_instances" {
+resource "aws_instance" "centrify_connectors" {
   depends_on = [aws_nat_gateway.nat_gw_private]
   count = 2
   
@@ -18,6 +18,9 @@ resource "aws_instance" "cfy_connector_instances" {
   get_password_data = true  
   source_dest_check = false
 
+  # User data
+  user_data = data.template_file.centrify_connector_script.rendered
+
   root_block_device {
     volume_size           = var.connector_disk_size
     delete_on_termination = true
@@ -28,7 +31,7 @@ resource "aws_instance" "cfy_connector_instances" {
   }
 }
 
-data "template_file" "centrify_connector" {
+data "template_file" "centrify_connector_script" {
   template = file(
     "${path.module}/data/Install-CentrifyConnector.ps1.template",
   )
@@ -37,16 +40,5 @@ data "template_file" "centrify_connector" {
     package_url = var.package_url
     tenant_url = var.tenant_url
     reg_code = var.reg_code
-  }
-}
-
-resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
-  provisioner "file" {
-    content = data.template_file.centrify_connector.rendered
-	destination = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
-  }
-  
-  provisioner "remote-exec" {
-    script = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
   }
 }
