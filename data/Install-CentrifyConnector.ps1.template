@@ -16,7 +16,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $installer = (Get-ChildItem -Path C:\Temp\Centrify\*.exe -File).FullName
 
 Write-Output "Running Centrify Connector Installer"
-Invoke-Expression "$installer /silent"
+Invoke-Expression "$installer /silent /norestart"
 
 $t = 0
 while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")) 
