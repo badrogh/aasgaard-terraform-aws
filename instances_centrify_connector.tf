@@ -35,6 +35,6 @@ resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
   }
   
   provisioner "remote-exec" {
-    inline = "C:\Temp\Centrify\Install-CentrifyConnector.ps1 -PackageURL '${var.package_url}' -TenantURL '${var.tenant_url}' -RegCode '${var.reg_code}'"
+    inline = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1 -PackageURL '${var.package_url}' -TenantURL '${var.tenant_url}' -RegCode '${var.reg_code}'"
   }
 }
