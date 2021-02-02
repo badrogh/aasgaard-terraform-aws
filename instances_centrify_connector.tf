@@ -28,13 +28,25 @@ resource "aws_instance" "cfy_connector_instances" {
   }
 }
 
+data "template_file" "centrify_connector" {
+  template = file(
+    "${path.module}/../data/Install-CentrifyConnector.ps1.template",
+  )
+
+  vars = {
+    package_url = var.package_url
+    tenant_url = var.tenant_url
+    reg_code = var.reg_code
+  }
+}
+
 resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
   provisioner "file" {
-    source = "${path.module}/data/Install-CentrifyConnector.ps1"
+    content = "${template_file.centrify_connector.rendered}"
 	destination = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
   }
   
   provisioner "remote-exec" {
-    inline = ["C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1 -PackageURL '${var.package_url}' -TenantURL '${var.tenant_url}' -RegCode '${var.reg_code}'"]
+    script = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
   }
 }
