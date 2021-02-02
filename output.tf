@@ -26,3 +26,7 @@ output "vpc_public_sg_id" {
 output "vpc_private_sg_id" {
   value = aws_security_group.vpc_private_sg.id
 }
+
+output "instance_private_key" {
+  value = tls_private_key.instance_key_pair.private_key_pem
+}
