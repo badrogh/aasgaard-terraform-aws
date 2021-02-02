@@ -1,3 +1,19 @@
+param(
+    [Parameter(Mandatory = $true)]
+    [String]
+    $PackageURL,
+
+    [Parameter(Mandatory = $true)]
+    [String]
+    $TenantURL,
+
+    [Parameter(Mandatory = $true)]
+    [String]
+    $RegCode
+
+)
+
+# Run Centrify Connector Installation
 Write-Output "####################################################"
 Write-Output "# Centrify Connector Installation and Registration #"
 Write-Output "####################################################"
@@ -11,15 +27,15 @@ if (!(Test-Path "C:\Temp\Centrify\"))
 Start-Transcript C:\Temp\Centrify\centrify_install.log
 
 Write-Output "> Downloading Centrify Connector Installer package"
-Invoke-WebRequest -Uri ${package_url} -OutFile C:\temp\Centrify\Centrify-Connector-Installer.zip
+Invoke-WebRequest -Uri $PackageURL -OutFile C:\temp\Centrify\Centrify-Connector-Installer.zip
 
 Write-Output "> Extracting package"
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\temp\Centrify\Centrify-Connector-Installer.zip", "C:\temp\Centrify\")
-$installer = (Get-ChildItem -Path C:\Temp\Centrify\*.exe -File).FullName
+$Installer = (Get-ChildItem -Path C:\Temp\Centrify\*.exe -File).FullName
 
 Write-Output "> Running Centrify Connector Installer"
-Invoke-Expression "$installer /silent /norestart"
+Invoke-Expression "$Installer /silent /norestart"
 
 $t = 1
 while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")) 
@@ -29,7 +45,7 @@ while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.
 }
 
 Write-Output "> Registering Centrify Connector against ${tenant_url}"
-& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe'  url=${tenant_url} regcode=${reg_code}
+& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe'  url=$TenantURL regcode=$RegCode}
 
 Write-Output "> Starting Centrify Connector service"
 Start-Service adproxy
