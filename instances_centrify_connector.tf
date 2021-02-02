@@ -31,7 +31,7 @@ resource "aws_instance" "cfy_connector_instances" {
 resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
   provisioner "file" {
     source = "${path.module}/data/Install-CentrifyConnector.ps1"
-	destination = "C:\Temp\Centrify\Install-CentrifyConnector.ps1"
+	destination = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
   }
   
   provisioner "remote-exec" {
