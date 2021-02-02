@@ -42,7 +42,7 @@ data "template_file" "centrify_connector" {
 
 resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
   provisioner "file" {
-    content = "${template_file.centrify_connector.rendered}"
+    content = "${data.template_file.centrify_connector.rendered}"
 	destination = "C:\\Temp\\Centrify\\Install-CentrifyConnector.ps1"
   }
   
