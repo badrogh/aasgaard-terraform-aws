@@ -29,8 +29,12 @@ resource "aws_instance" "cfy_connector_instances" {
 }
 
 resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
-  provisioner "local-exec" {
-    command = "'${path.module}/data/Install-CentrifyConnector.ps1' -PackageURL '${var.package_url}' -TenantURL '${var.tenant_url}' -RegCode '${var.reg_code}'"
-	interpreter = ["PowerShell", "-Command"]
+  provisioner "file" {
+    source = "${path.module}/data/Install-CentrifyConnector.ps1"
+	destination = "C:\Temp\Centrify\Install-CentrifyConnector.ps1"
+  }
+  
+  provisioner "remote-exec" {
+    inline = "C:\Temp\Centrify\Install-CentrifyConnector.ps1 -PackageURL '${var.package_url}' -TenantURL '${var.tenant_url}' -RegCode '${var.reg_code}'"
   }
 }
