@@ -1,29 +1,10 @@
 ### Setup our AWS provider
 #
 provider "aws" {
-  access_key = var.AWS_ACCESS_KEY_ID
-  secret_key = var.AWS_SECRET_ACCESS_KEY
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
   region = var.aws_region
 }
-
-### Main VPC declaration
-# Note that demo VPC uses 10.0.0.0/16 CIDR block by default (see Variables.tf)
-#
-resource "aws_vpc" "vpc_name" {
-  cidr_block = var.vpc_cidr_block
-  tags = {
-    Name = var.vpc_name
-  }
-}
-
-data "aws_availability_zones" "available" {
-	state = "available"
-}
-
-#locals {
-#	public_subnets = aws_subnet.vpc_public_subnets.*.id
-#	private_subnets = aws_subnet.vpc_private_subnets.*.id
-#}
 
 resource "random_id" "server_name" {
   byte_length = 8

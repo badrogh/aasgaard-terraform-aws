@@ -2,14 +2,14 @@
 #
 
 ### Credentials for AWS connection
-# Note that both AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY should always be variables set in your Terraform 
-# workspaces instead of using variables.tf file.
-# The AWS_SECRET_ACCESS_KEY should always be set as Sensitive (write only)
-variable "AWS_ACCESS_KEY_ID" {
+# Note that both aws_access_key and aws_secret_key should always be variables set in your Terraform 
+# workspaces instead of using variables.tf file when using Terraform Cloud.
+# The aws_secret_access_key should always be set as Sensitive (write only)
+variable "aws_access_key" {
     description = "AWS access key"
 }
 
-variable "AWS_SECRET_ACCESS_KEY" {
+variable "aws_secret_key" {
     description = "AWS secret access key"
 }
 
@@ -38,7 +38,7 @@ variable "vpc_public_subnet_cidrs" {
 
 variable "vpc_private_subnet_cidrs" {
     description = "Private Subnets CIDR for internally accessible resources"
-    default = ["10.0.10.0/24", "10.0.11.0/24"]
+    default = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
 }
 
 ### Centrify variable
