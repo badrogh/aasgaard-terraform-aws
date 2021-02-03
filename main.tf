@@ -7,6 +7,11 @@ provider "aws" {
 }
 
 resource "random_id" "server_name" {
+  keepers = {
+    # Generate a new id each time we provision a new instance
+	ami_id = data.aws_ami.windows_ami.id
+  }
+  
   byte_length = 8
 }
 
