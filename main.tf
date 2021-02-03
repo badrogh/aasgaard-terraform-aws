@@ -25,12 +25,8 @@ locals {
 	private_subnets = aws_subnet.vpc_private_subnets.*.id
 }
 
-resource "random_string" "server_name" {
-  length = 7
-  upper = true
-  lower = false
-  number = true
-  special = false
+resource "random_id" "server_name" {
+  byte_length = 8
 }
 
 ### AMI selections

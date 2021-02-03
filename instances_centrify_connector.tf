@@ -18,7 +18,6 @@ resource "aws_instance" "centrify_connector" {
   source_dest_check = false
 
   # Data
-  name = "EC2AMAZ-${random_string.server_name.result}"
   user_data = data.template_file.connector_install_script.rendered
 
   root_block_device {
@@ -27,7 +26,7 @@ resource "aws_instance" "centrify_connector" {
   }
 
   tags = {
-    Name = "EC2AMAZ-${random_string.server_name.result}"
+    Name = "centrify-connector-${random_id.server_name.hex}"
   }
 }
 
