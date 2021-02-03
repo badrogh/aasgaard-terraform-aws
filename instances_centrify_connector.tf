@@ -5,7 +5,7 @@ resource "aws_instance" "centrify_connector" {
   count = length(aws_subnet.vpc_private_subnets.*.id)
   
   # Instance type
-  ami = random_id.server_name.keepers.ami_id
+  ami = data.aws_ami.windows_ami.id
   instance_type = var.connector_instance_type
   
   # Network settings
@@ -28,7 +28,7 @@ resource "aws_instance" "centrify_connector" {
   }
 
   tags = {
-    Name = "centrify-connector-${random_id.server_name.hex}"
+    Name = "centrify-connector-${count.index}-${random_id.instance.hex}"
   }
 }
 

@@ -6,7 +6,7 @@ resource "tls_private_key" "instance_key_pair" {
 }
 
 resource "aws_key_pair" "instance_key" {
-  key_name   = "${var.vpc_name}-instance-key"
+  key_name   = "instance-key-${random_id.instance.hex}"
   public_key = tls_private_key.instance_key_pair.public_key_openssh
 }
 

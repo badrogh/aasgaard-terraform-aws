@@ -4,7 +4,7 @@
 resource "aws_vpc" "vpc_name" {
   cidr_block = var.vpc_cidr_block
   tags = {
-    Name = var.vpc_name
+    Name = "${var.vpc_name}-${random_id.instance.hex}"
   }
 }
 
@@ -22,7 +22,7 @@ resource "aws_subnet" "vpc_public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.vpc_name}-public-sn-${count.index}"
+    Name = "public-subnet-${count.index}-${random_id.instance.hex}"
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_subnet" "vpc_private_subnets" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.vpc_name}-private-sn-${count.index}"
+    Name = "private-subnet-${count.index}-${random_id.instance.hex}"
   }
 }
 
@@ -45,7 +45,7 @@ resource "aws_internet_gateway" "vpc_igw" {
   vpc_id = aws_vpc.vpc_name.id
   
   tags = {
-    Name = "${var.vpc_name}-igw"
+    Name = "igw-${random_id.instance.hex}"
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_route_table" "igw_route_public" {
   }
   
   tags = {
-    Name = "${var.vpc_name}-public-internet-rt"
+    Name = "public-internet-rt-${random_id.instance.hex}"
   }
 }
 
@@ -88,7 +88,7 @@ resource "aws_route_table" "nat_route_private" {
   }
   
   tags = {
-    Name = "${var.vpc_name}-private-nat-rt-${count.index}"
+    Name = "private-nat-rt-${count.index}-${random_id.instance.hex}"
   }
 }
 
@@ -151,7 +151,7 @@ resource "aws_security_group" "centrify_connector_sg" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-centrify-connector-sg"
+    Name = "centrify-connector-sg-${random_id.instance.hex}"
   }
 }
 
@@ -209,7 +209,7 @@ resource "aws_security_group" "vpc_public_sg" {
   }
 
   tags = {
-    Name = "${var.vpc_name}-public-sg"
+    Name = "public-sg-${random_id.instance.hex}"
   }
 }
 
@@ -267,6 +267,6 @@ resource "aws_security_group" "vpc_private_sg" {
   }
   
   tags = {
-    Name = "${var.vpc_name}-private-sg"
+    Name = "private-sg-${random_id.instance.hex}"
   }
 }
