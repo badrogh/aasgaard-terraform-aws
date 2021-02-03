@@ -35,7 +35,7 @@ while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.
 	Start-Sleep -Seconds 10 
 }
 
-Write-Output "> Registering Centrify Connector against ${tenant_url}"
+Write-Output "> Registering Centrify Connector against $TenantURL"
 & 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe'  url=$TenantURL regcode=$RegCode
 
 Write-Output "> Starting Centrify Connector service"
