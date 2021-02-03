@@ -33,12 +33,12 @@ variable "vpc_cidr_block" {
 
 variable "vpc_public_subnet_cidrs" {
     description = "Public Subnets CIDR for externally accessible resources"
-    default = ["10.0.0.0/24", "10.0.1.0/24"]
+    default = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "vpc_private_subnet_cidrs" {
     description = "Private Subnets CIDR for internally accessible resources"
-    default = ["10.0.10.0/24", "10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
+    default = ["10.0.10.0/24", "10.0.20.0/24"]
 }
 
 ### Centrify variable
