@@ -1,14 +1,14 @@
 resource "aws_instance" "centrify_connector" {
   # Deploy 1 Centrify Connector per private subnet
   depends_on = [aws_nat_gateway.nat_gw_private]
-  for_each = aws_subnet.vpc_private_subnets
+  for_each = aws_subnet.vpc_private_subnets.*.id
   
   # Instance type
   ami = data.aws_ami.windows_ami.id
   instance_type = var.connector_instance_type
   
   # Network settings
-  subnet_id = each.value.id
+  subnet_id = each.value
   associate_public_ip_address = false
   vpc_security_group_ids = [aws_security_group.centrify_connector_sg.id, aws_security_group.vpc_private_sg.id]
   
