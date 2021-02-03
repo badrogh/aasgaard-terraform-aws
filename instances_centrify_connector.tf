@@ -20,10 +20,10 @@ resource "aws_instance" "centrify_connector" {
   source_dest_check = false
 
   # Data
-  user_data = data.template_file.connector_install_script.rendered
+  user_data = data.template_file.invoke_powershell_script.rendered
 
   provisioner "file" {
-    source = "${path.module}/data/Install-CentrifyConnector.ps1"
+    content = data.template_file.connector_install_script.rendered
 	destination = "C:\\Temp\\Install-CentrifyConnector.ps1"
   }
 
@@ -37,7 +37,7 @@ resource "aws_instance" "centrify_connector" {
   }
 }
 
-data "template_file" "connector_install_script" {
+data "template_file" "invoke_powershell_script" {
   template = file(
     "${path.module}/data/Invoke-PowerShell-Script.template",
   )
@@ -47,4 +47,10 @@ data "template_file" "connector_install_script" {
     tenant_url = var.tenant_url
     reg_code = var.reg_code
   }
+}
+
+data "template_file" "connector_install_script" {
+  template = file(
+    "${path.module}/data/Install-CentrifyConnector.ps1.template",
+  )
 }
