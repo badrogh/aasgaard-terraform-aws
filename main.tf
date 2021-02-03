@@ -10,11 +10,6 @@ resource "random_id" "server_name" {
   byte_length = 8
 }
 
-locals {
-  public_subnets  = aws_subnet.vpc_public_subnets.*.id
-  private_subnets = aws_subnet.vpc_private_subnets.*.id
-}
-
 ### AMI selections
 # Use this section to list out the AMI to use for instances creation
 data "aws_ami" "windows_ami" {

@@ -1,7 +1,9 @@
 resource "aws_instance" "centrify_connector" {
-  # Deploy 1 Centrify Connector per private subnet
   depends_on = [aws_nat_gateway.nat_gw_private]
-  for_each = toset(local.private_subnets)
+  depends_on = [aws_subnet.vpc_private_subnets]
+  
+  # Deploy 1 Centrify Connector per private subnet
+  for_each = toset(aws_subnet.vpc_private_subnets.*.id)
   
   # Instance type
   ami = data.aws_ami.windows_ami.id
