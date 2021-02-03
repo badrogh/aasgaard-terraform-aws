@@ -41,6 +41,11 @@ variable "vpc_private_subnet_cidrs" {
     default = ["10.0.10.0/24", "10.0.20.0/24"]
 }
 
+variable "rdp_gateway_instance_type" {
+  description = "Instance type for RDP Gateway server"
+  default = "t2.micro"
+}
+
 ### Centrify variable
 # Default values to use for Centrify Connector installation and enrolment
 # Values specific to your environment should be set in your Terraform workspace instead of editing this file.

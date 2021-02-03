@@ -105,6 +105,32 @@ resource "aws_route_table_association" "vpc_private_routes" {
 }
 
 ### Security Groups
+resource "aws_security_group" "rdp_gateway_sg" {
+  name = "rdp_gateway_sg"
+  description = "RDP Gateway security group"
+  vpc_id = aws_vpc.vpc_name.id
+
+  ingress {
+    # allow RDP from anywhere
+	from_port = 3389
+    to_port = 3389
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    # allow all outbound traffic
+    from_port = "0"
+    to_port = "0"
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rdp-gateway-sg-${random_id.instance.hex}"
+  }
+}
+
 resource "aws_security_group" "centrify_connector_sg" {
   name = "centrify_connector_sg"
   description = "Centrify Connector security group"
@@ -127,7 +153,7 @@ resource "aws_security_group" "centrify_connector_sg" {
   }
 
   ingress {
-    # allow SSH Gateway from anywhere
+    # allow Centrify SSH Gateway from anywhere
 	from_port = 22
     to_port = 22
     protocol = "tcp"
@@ -135,7 +161,7 @@ resource "aws_security_group" "centrify_connector_sg" {
   }
 
   ingress {
-    # allow SSH Gateway from anywhere
+    # allow Centrify RDP Gateway from anywhere
 	from_port = 5555
     to_port = 5555
     protocol = "tcp"
