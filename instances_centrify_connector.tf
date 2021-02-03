@@ -19,19 +19,19 @@ resource "aws_instance" "centrify_connectors" {
   source_dest_check = false
 
   # User data
-  user_data = data.template_file.centrify_connector_script.rendered
+  user_data = data.template_file.connector_install_script.rendered
 
   root_block_device {
-    volume_size           = var.connector_disk_size
+    volume_size = var.connector_disk_size
     delete_on_termination = true
   }
 
   tags = {
-    Name = "${var.vpc_name}-centrify-connector-${count.index}"
+    Name = "${var.vpc_name}-centrify-connector-${random_id.instance.hex}"
   }
 }
 
-data "template_file" "centrify_connector_script" {
+data "template_file" "connector_install_script" {
   template = file(
     "${path.module}/data/Install-CentrifyConnector.ps1.template",
   )

@@ -9,7 +9,7 @@ resource "aws_subnet" "vpc_public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.vpc_name}-public-sn-${count.index}"
+    Name = "${var.vpc_name}-public-sn-${random_id.instance.hex}"
   }
 }
 
@@ -24,7 +24,7 @@ resource "aws_subnet" "vpc_private_subnets" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "${var.vpc_name}-private-sn-${count.index}"
+    Name = "${var.vpc_name}-private-sn-${random_id.instance.hex}"
   }
 }
 
@@ -78,7 +78,7 @@ resource "aws_route_table" "nat_route_private" {
   }
   
   tags = {
-    Name = "${var.vpc_name}-private-nat-rt-${count.index}"
+    Name = "${var.vpc_name}-private-nat-rt-${random_id.instance.hex}"
   }
 }
 
