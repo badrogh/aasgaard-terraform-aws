@@ -261,11 +261,11 @@ resource "aws_security_group" "vpc_private_sg" {
   }
 
   ingress {
-    # allow RDP from Centrify Connectors
+    # allow RDP from Centrify Connectors and RDP Gateways
     from_port = 3389
     to_port = 3389
     protocol = "tcp"
-    security_groups = [aws_security_group.centrify_connector_sg.id]
+    security_groups = [aws_security_group.centrify_connector_sg.id, aws_security_group.rdp_gateway_sg.id]
   }
 
   ingress {
