@@ -1,0 +1,3 @@
+<script>
+  PowerShell -ExecutionPolicy ByPass -NoProfile -File C:\Temp\Install-CentrifyConnector.ps1 -PackageURL ${package_url} -TenantURL ${tenant_url} -RegCode ${reg_code}
+</script>

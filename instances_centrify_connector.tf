@@ -22,6 +22,11 @@ resource "aws_instance" "centrify_connector" {
   # Data
   user_data = data.template_file.connector_install_script.rendered
 
+  provisioner "file" {
+    source = "${path.module}/data/Install-CentrifyConnector.ps1"
+	destination = "C:\\Temp\\Install-CentrifyConnector.ps1"
+  }
+
   root_block_device {
     volume_size = var.connector_disk_size
     delete_on_termination = true
@@ -34,7 +39,7 @@ resource "aws_instance" "centrify_connector" {
 
 data "template_file" "connector_install_script" {
   template = file(
-    "${path.module}/data/Install-CentrifyConnector.ps1.template",
+    "${path.module}/data/Invoke-PowerShell-Script.template",
   )
 
   vars = {
