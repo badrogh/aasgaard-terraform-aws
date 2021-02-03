@@ -20,10 +20,10 @@ data "aws_availability_zones" "available" {
 	state = "available"
 }
 
-locals {
-	public_subnets = aws_subnet.vpc_public_subnets.*.id
-	private_subnets = aws_subnet.vpc_private_subnets.*.id
-}
+#locals {
+#	public_subnets = aws_subnet.vpc_public_subnets.*.id
+#	private_subnets = aws_subnet.vpc_private_subnets.*.id
+#}
 
 resource "random_id" "server_name" {
   byte_length = 8
