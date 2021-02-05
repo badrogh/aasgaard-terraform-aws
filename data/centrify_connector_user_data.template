@@ -7,6 +7,10 @@ if (!(Test-Path "C:\Windows\Temp\Centrify\"))
 {
 	New-Item "C:\Windows\Temp\Centrify" -ItemType Directory | Out-Null
 }
+if (!(Test-Path "C:\Windows\Temp\Centrify\centrify_install.log"))
+{
+	New-Item "C:\Windows\Temp\Centrify\centrify_install.log" | Out-Null
+}
 Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log" -UseMinimalHeader -Append
 
 # Checking if Centrify Connector is installed
