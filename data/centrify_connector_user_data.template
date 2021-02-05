@@ -7,7 +7,7 @@ if (!(Test-Path "C:\Windows\Temp\Centrify\"))
 {
 	New-Item "C:\Windows\Temp\Centrify\" | Out-Null
 }
-Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log"
+#Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log"
 
 # Centrify Connector Installation
 Write-Output "####################################################"
@@ -24,11 +24,11 @@ $InstallerFile = (Get-ChildItem -Path "C:\Windows\Temp\Centrify\*.exe" -File).Fu
 Write-Output "> Running Centrify Connector Installer..."
 Invoke-Expression "$InstallerFile /silent /norestart"
 
-$t = 0
+$t = 1
 while ($true) 
 { 
-	Write-Output ("Waiting for installation to finish... [{0:m\mss\s} elapsed]" -f [TimeSpan]::FromSeconds(10 * $t++))
 	Start-Sleep -Seconds 10
+	Write-Output ("Waiting for installation to finish... [{0:m\mss\s} elapsed]" -f [TimeSpan]::FromSeconds(10 * $t++))
 	# Break out if Installation complete
 	if (Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")
 	{
@@ -46,5 +46,5 @@ Start-Service adproxy
 
 Write-Output "Done."
 
-Stop-Transcript
+#Stop-Transcript
 </powershell>
