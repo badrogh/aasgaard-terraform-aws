@@ -15,7 +15,7 @@ Write-Output "# Centrify Connector Installation and Registration #"
 Write-Output "####################################################"
 Write-Output
 Write-Output "> Downloading Centrify Connector Installer package..."
-Invoke-WebRequest -Uri $package_url -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
+Invoke-WebRequest -Uri "${package_url}" -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
 
 Write-Output "> Extracting package..."
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -32,8 +32,8 @@ while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.
 	Start-Sleep -Seconds 10 
 }
 
-Write-Output "> Registering Centrify Connector against $tenant_url..."
-& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=$tenant_url regcode=$reg_code
+Write-Output "> Registering Centrify Connector against ${tenant_url}..."
+& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
 
 Write-Output "> Starting Centrify Connector service..."
 Start-Service adproxy
