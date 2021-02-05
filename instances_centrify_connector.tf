@@ -19,12 +19,17 @@ resource "aws_instance" "centrify_connector" {
   get_password_data = true  
   source_dest_check = false
 
-  # Data
-  user_data = data.template_file.invoke_powershell_script.rendered
-
+  # Copy install script
   provisioner "file" {
-    content = data.template_file.connector_install_script.rendered
-	destination = "C:\\Temp\\Install-CentrifyConnector.ps1"
+    source = "${path.module}/data/Install-CentrifyConnector.ps1"
+    destination = "C:/Windows/Temp/Install-CentrifyConnector.ps1"
+  }
+
+  # Execute install script
+  provisioner "remote-exec" {
+    inline = [
+      "PowerShell.exe -ExecutionPolicy ByPass -File C:/Windows/Temp/Install-CentrifyConnector.ps1 -PackageURL ${var.package_url} -TenantURL ${var.tenant_url} -RegCode ${var.reg_code}"
+    ]
   }
 
   root_block_device {
@@ -35,22 +40,4 @@ resource "aws_instance" "centrify_connector" {
   tags = {
     Name = "centrify-connector-${count.index}-${random_id.instance.hex}"
   }
-}
-
-data "template_file" "invoke_powershell_script" {
-  template = file(
-    "${path.module}/data/Invoke-PowerShell-Script.template",
-  )
-
-  vars = {
-    package_url = var.package_url
-    tenant_url = var.tenant_url
-    reg_code = var.reg_code
-  }
-}
-
-data "template_file" "connector_install_script" {
-  template = file(
-    "${path.module}/data/Install-CentrifyConnector.ps1.template",
-  )
 }
