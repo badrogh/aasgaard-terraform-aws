@@ -11,7 +11,7 @@ if (!(Test-Path "C:\Windows\Temp\Centrify\centrify_install.log"))
 {
 	New-Item "C:\Windows\Temp\Centrify\centrify_install.log" | Out-Null
 }
-Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log" -UseMinimalHeader -Append
+Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log" -Append
 
 # Checking if Centrify Connector is installed
 if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
