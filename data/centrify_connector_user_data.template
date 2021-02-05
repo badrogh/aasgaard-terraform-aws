@@ -13,9 +13,8 @@ Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log"
 Write-Output "####################################################"
 Write-Output "# Centrify Connector Installation and Registration #"
 Write-Output "####################################################"
-Write-Output
 Write-Output "> Downloading Centrify Connector Installer package..."
-Invoke-WebRequest -Uri "${package_url}" -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
+Invoke-WebRequest -UseBasicParsing -Uri "${package_url}" -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
 
 Write-Output "> Extracting package..."
 Add-Type -AssemblyName System.IO.Compression.FileSystem
