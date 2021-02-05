@@ -5,7 +5,7 @@ Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force -ErrorAction Ignore
 # Prepare temp folder and start transcript
 if (!(Test-Path "C:\Windows\Temp\Centrify\"))
 {
-	New-Item "C:\Windows\Temp\Centrify\" | Out-Null
+	New-Item "C:\Windows\Temp\Centrify" -ItemType Directory | Out-Null
 }
 Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log" -UseMinimalHeader -Append
 
@@ -34,6 +34,13 @@ if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
 		{
 			Write-Output ">Installation complete"
 			break;
+		}
+		# Break out after 10 minutes to avoid infinite loop
+		if ($t -gt 60)
+		{
+			Write-Output ">Installation failed"
+			Stop-Transcript
+			exit;
 		}
 	}
 }
