@@ -17,16 +17,24 @@ Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log" -Append
 if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
 {
 	# Centrify Connector Installation
-	Write-Output "> Downloading Centrify Connector Installer package..."
-	Invoke-WebRequest -UseBasicParsing -Uri "${package_url}" -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
+	if (!(Test-Path "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"))
+	{
+		# Downloading package
+		Write-Output "> Downloading Centrify Connector Installer package..."
+		Invoke-WebRequest -UseBasicParsing -Uri "${package_url}" -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
+	}
 
-	Write-Output "> Extracting package..."
-	Add-Type -AssemblyName System.IO.Compression.FileSystem
-	[System.IO.Compression.ZipFile]::ExtractToDirectory("C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip", "C:\Windows\Temp\Centrify\")
+	if (!(Test-Path "C:\Windows\Temp\Centrify\*.exe"))
+	{
+		# Extracting package
+		Write-Output "> Extracting package..."
+		Add-Type -AssemblyName System.IO.Compression.FileSystem
+		[System.IO.Compression.ZipFile]::ExtractToDirectory("C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip", "C:\Windows\Temp\Centrify\")
+	}
+	
 	$InstallerFile = (Get-ChildItem -Path "C:\Windows\Temp\Centrify\*.exe" -File).FullName
-
 	Write-Output "> Running Centrify Connector Installer..."
-	Invoke-Expression "$InstallerFile /silent /norestart"
+	Invoke-Expression "$InstallerFile /silent"
 
 	$t = 1
 	while ($true) 
