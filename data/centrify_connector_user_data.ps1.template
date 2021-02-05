@@ -1,23 +1,13 @@
-param
-(
-	[Parameter(Mandatory = $true)]
-	[String]$PackageURL,
+<powershell>
+# Set Execution Policy
+Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force -ErrorAction Ignore
 
-	[Parameter(Mandatory = $true)]
-	[String]$TenantURL,
-
-	[Parameter(Mandatory = $true)]
-	[String]$RegCode,
-
-	[Parameter(Mandatory = $false)]
-	[String]$TempFolder = "C:\Windows\Temp\Centrify\"
-)
 # Prepare temp folder and start transcript
-if (!(Test-Path $TempFolder))
+if (!(Test-Path "C:\Windows\Temp\Centrify\"))
 {
-	New-Item $TempFolder | Out-Null
+	New-Item "C:\Windows\Temp\Centrify\" | Out-Null
 }
-Start-Transcript ("{0}centrify_install.log" -f $TempFolder)
+Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log"
 
 # Centrify Connector Installation
 Write-Output "####################################################"
@@ -25,12 +15,12 @@ Write-Output "# Centrify Connector Installation and Registration #"
 Write-Output "####################################################"
 Write-Output
 Write-Output "> Downloading Centrify Connector Installer package..."
-Invoke-WebRequest -Uri $PackageURL -OutFile ("{0}Centrify-Connector-Installer.zip" -f $TempFolder)
+Invoke-WebRequest -Uri $package_url -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
 
 Write-Output "> Extracting package..."
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[System.IO.Compression.ZipFile]::ExtractToDirectory(("{0}Centrify-Connector-Installer.zip" -f $TempFolder, $TempFolder))
-$InstallerFile = (Get-ChildItem -Path ("{0}*.exe" -f $TempFolder) -File).FullName
+[System.IO.Compression.ZipFile]::ExtractToDirectory("C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip", "C:\Windows\Temp\Centrify\")
+$InstallerFile = (Get-ChildItem -Path "C:\Windows\Temp\Centrify\*.exe" -File).FullName
 
 Write-Output "> Running Centrify Connector Installer..."
 Invoke-Expression "$InstallerFile /silent /norestart"
@@ -42,8 +32,8 @@ while (!(Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.
 	Start-Sleep -Seconds 10 
 }
 
-Write-Output "> Registering Centrify Connector against $TenantURL..."
-& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=$TenantURL regcode=$RegCode
+Write-Output "> Registering Centrify Connector against $tenant_url..."
+& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=$tenant_url regcode=$reg_code
 
 Write-Output "> Starting Centrify Connector service..."
 Start-Service adproxy
@@ -51,3 +41,4 @@ Start-Service adproxy
 Write-Output "Done."
 
 Stop-Transcript
+</powershell>
