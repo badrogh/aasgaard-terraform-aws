@@ -30,9 +30,15 @@ resource "aws_instance" "centrify_connector" {
 }
 
 resource "null_resource" "PowerShellScriptRunFirstTimeOnly" {
+  # Copy install script
+  provisioner "file" {
+    source = "${path.module}/data/Install-CentrifyConnector.ps1"
+    destination = "C:/Windows/Temp/Install-CentrifyConnector.ps1"
+  }
+  
   # Execute install script
   provisioner "local-exec" {
-    command = "PowerShell.exe -ExecutionPolicy ByPass -File ${path.module}/data/Install-CentrifyConnector.ps1 -PackageURL ${var.package_url} -TenantURL ${var.tenant_url} -RegCode ${var.reg_code}"
+    command = "PowerShell.exe -ExecutionPolicy ByPass -File C:/Windows/Temp/Install-CentrifyConnector.ps1 -PackageURL ${var.package_url} -TenantURL ${var.tenant_url} -RegCode ${var.reg_code}"
     interpreter = ["PowerShell", "-Command"]
   }
 }
