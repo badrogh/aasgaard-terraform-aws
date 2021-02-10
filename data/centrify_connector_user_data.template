@@ -1,7 +1,4 @@
 <powershell>
-# Set Execution Policy
-Set-ExecutionPolicy Unrestricted -Scope LocalMachine -Force -ErrorAction Ignore
-
 # Prepare temp folder and start transcript
 if (!(Test-Path "C:\Windows\Temp\Centrify\"))
 {
@@ -73,7 +70,7 @@ else
 }
 
 # Centrify Connector registration and service status
-if (Get-Service adproxy -ErrorAction Ignore)
+if ((Get-Service | Where-Object { $_.Name -eq "adproxy" }).Count -gt 0)
 {
 	# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
 	if (!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
