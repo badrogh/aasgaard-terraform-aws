@@ -65,8 +65,6 @@ if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
 		# Installer will install .NET Framework 4.8
 		Write-Output "> Updating .NET Framework to version 4.8. Server will be restarted after .NET Framework upgrade and Centrify Connector installation will resume."
 	}
-
-	
 }
 else
 {
@@ -74,16 +72,17 @@ else
 	Write-Output "> Centrify Connector is already installed. Skipping installation."
 }
 
-# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
-if (!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
-{
-	# Registering Centrify Connector
-	Write-Output "> Registering Centrify Connector against ${tenant_url}..."
-	& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
-}
-
+# Centrify Connector registration and service status
 if (Get-Service adproxy)
 {
+	# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
+	if ((!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
+	{
+		# Registering Centrify Connector
+		Write-Output "> Registering Centrify Connector against ${tenant_url}..."
+		& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
+	}
+
 	# Check Centrify Connector service status
 	if ((Get-Service adproxy).Status -eq "Running")
 	{
