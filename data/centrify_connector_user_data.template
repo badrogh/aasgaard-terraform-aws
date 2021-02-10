@@ -36,45 +36,64 @@ if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
 	Write-Output "> Running Centrify Connector Installer..."
 	Invoke-Expression "$InstallerFile /silent"
 
-	$t = 1
-	while ($true) 
-	{ 
-		Start-Sleep -Seconds 10
-		Write-Output ("Waiting for installation to finish... [{0:m\mss\s} elapsed]" -f [TimeSpan]::FromSeconds(10 * $t++))
-		# Break out if Installation complete
-		if (Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")
-		{
-			Write-Output "> Installation complete"
-			break;
-		}
-		# Break out after 10 minutes to avoid infinite loop
-		if ($t -gt 60)
-		{
-			Write-Output "> Installation interrupted"
-			Stop-Transcript
-			exit;
+	# Checking .NET Framework version - Note that Release 528040 is .NET 4.8
+	if ((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\').Release -ge 528040)
+	{
+		# .NET Framework 4.8 or later is present
+		$t = 1
+		while ($true) 
+		{ 
+			Start-Sleep -Seconds 10
+			Write-Output ("Waiting for installation to finish... [{0:m\mss\s} elapsed]" -f [TimeSpan]::FromSeconds(10 * $t++))
+			# Break out if Installation complete
+			if (Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")
+			{
+				Write-Output "> Installation complete"
+				break;
+			}
+			# Break out after 10 minutes to avoid infinite loop
+			if ($t -gt 60)
+			{
+				Write-Output "> Installation interrupted"
+				Stop-Transcript
+				exit;
+			}
 		}
 	}
+	else
+	{
+		# Installer will install .NET Framework 4.8
+		Write-Output "> Updating .NET Framework to version 4.8. Server will be restarted after .NET Framework upgrade and Centrify Connector installation will resume."
+	}
+
+	
+}
+else
+{
+	# Centrify Connector already installed
+	Write-Output "> Centrify Connector is already installed. Skipping installation."
 }
 
-# Registering Centrify Connector
-Write-Output "> Registering Centrify Connector against ${tenant_url}..."
-& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
+# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
+if (!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
+{
+	# Registering Centrify Connector
+	Write-Output "> Registering Centrify Connector against ${tenant_url}..."
+	& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
+}
 
 if (Get-Service adproxy)
 {
 	# Check Centrify Connector service status
 	if ((Get-Service adproxy).Status -eq "Running")
 	{
-		# Restart Service
-		Write-Output "> Restart Centrify Connector service..."
-		Stop-Service adproxy
-		Start-Service adproxy
+		# Service is started
+		Write-Output "> Centrify Connector service is running."
 	}
 	else
 	{
 		# Start Service
-		Write-Output "> Start Centrify Connector service..."
+		Write-Output "> Starting Centrify Connector service..."
 		Start-Service adproxy
 	}
 }
