@@ -73,10 +73,10 @@ else
 }
 
 # Centrify Connector registration and service status
-if (Get-Service adproxy)
+if (Get-Service adproxy -ErrorAction Ignore)
 {
 	# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
-	if ((!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
+	if (!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
 	{
 		# Registering Centrify Connector
 		Write-Output "> Registering Centrify Connector against ${tenant_url}..."
