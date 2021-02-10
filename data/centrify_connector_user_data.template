@@ -44,13 +44,13 @@ if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
 		# Break out if Installation complete
 		if (Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")
 		{
-			Write-Output ">Installation complete"
+			Write-Output "> Installation complete"
 			break;
 		}
 		# Break out after 10 minutes to avoid infinite loop
 		if ($t -gt 60)
 		{
-			Write-Output ">Installation failed"
+			Write-Output "> Installation interrupted"
 			Stop-Transcript
 			exit;
 		}
@@ -61,9 +61,23 @@ if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
 Write-Output "> Registering Centrify Connector against ${tenant_url}..."
 & 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
 
-Write-Output "> Restart Centrify Connector service..."
-Stop-Service adproxy
-Start-Service adproxy
+if (Get-Service adproxy)
+{
+	# Check Centrify Connector service status
+	if ((Get-Service adproxy).Status -eq "Running")
+	{
+		# Restart Service
+		Write-Output "> Restart Centrify Connector service..."
+		Stop-Service adproxy
+		Start-Service adproxy
+	}
+	else
+	{
+		# Start Service
+		Write-Output "> Start Centrify Connector service..."
+		Start-Service adproxy
+	}
+}
 
 Stop-Transcript
 </powershell>
