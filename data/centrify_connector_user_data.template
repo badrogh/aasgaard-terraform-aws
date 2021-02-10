@@ -73,7 +73,7 @@ else
 if ((Get-Service | Where-Object { $_.Name -eq "adproxy" }).Count -gt 0)
 {
 	# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
-	if (!(Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId -match "[a-zA-Z]{3}[0-9]{4}")
+	if ([String]::IsNullOrEmpty((Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId))
 	{
 		# Registering Centrify Connector
 		Write-Output "> Registering Centrify Connector against ${tenant_url}..."
