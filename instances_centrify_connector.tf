@@ -70,7 +70,7 @@ resource "centrifyvault_vaultsystem" "windows" {
   depends_on = [aws_instance.centrify_connector]
   count = length(aws_instance.centrify_connector.*.id)
 
-  name = element(aws_instance.centrify_connector.*.name, count.index % 2)
+  name = element(aws_instance.centrify_connector.*.id, count.index % 2)
   fqdn = element(aws_instance.centrify_connector.*.public_ip, count.index % 2)
 
   computer_class = "Windows"
