@@ -13,7 +13,7 @@ resource "aws_key_pair" "instance_key" {
 # Private key is vaulted in Centrify tenant for accessibility to systems
 resource "centrifyvault_sshkey" "instance_private_key" {
   name = "instance-key-${var.vpc_name}"
-  description = "AWS SSH Key pair"
+  description = "AWS Key pair"
   private_key  = tls_private_key.instance_key_pair.private_key_pem
   passphrase = ""
   
