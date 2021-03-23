@@ -53,6 +53,14 @@ variable "rdp_gateway_instance_type" {
 # Centrify Connector servers uses t2.micro instance type by default, this is only suitable for this demo,
 # for eval or production deployment you should edit instance type to suite your needs (t2.large is minimum recommended)
 #
+variable "centrify_api_user" {
+    description = "Centrify Service User username for OAuth2 token authentication"
+}
+
+variable "centrify_api_secret" {
+    description = "Centrify Service User secret for OAuth2 token authentication"
+}
+
 variable "package_url" {
     description = "Centrify Connector Installer package download URL"
     default = "https://edge.centrify.com/products/cloud-service/ProxyDownload/Centrify-Connector-Installer.zip"
@@ -68,7 +76,7 @@ variable "reg_code" {
 
 variable "connector_instance_type" {
   description = "Instance type for Centrify Connector server"
-  default = "t2.micro"
+  default = "t2.medium"
 }
 
 variable "connector_disk_size" {
