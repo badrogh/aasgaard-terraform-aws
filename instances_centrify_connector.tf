@@ -43,3 +43,29 @@ data "template_file" "centrify_connector_user_data" {
     reg_code = var.reg_code
   }
 }
+
+# Create manual System Set
+resource "centrifyvault_manualset" "centrify_connectors_set" {
+    name = "Centrify Connectors"
+    type = "Server"
+    description = "This Set contains Centrify Connectors provisionned by Terraform."
+
+    permission {
+        principal_id = data.centrifyvault_role.system_admin.id
+        principal_name = data.centrifyvault_role.system_admin.name
+        principal_type = "Role"
+        rights = ["Grant","View"]
+    }
+
+    member_permission {
+        principal_id = data.centrifyvault_role.system_admin.id
+        principal_name = data.centrifyvault_role.system_admin.name
+        principal_type = "Role"
+        rights = ["Grant","View","ManageSession","Edit","Delete","AgentAuth","OfflineRescue","AddAccount","UnlockAccount","ManagementAssignment","RequestZoneRole"]
+    }
+}
+
+# Used by creation of set
+data "centrifyvault_role" "system_admin" {
+    name = "System Administrator"
+}
