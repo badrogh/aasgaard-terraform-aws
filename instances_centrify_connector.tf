@@ -64,3 +64,24 @@ resource "centrifyvault_manualset" "centrify_connectors_set" {
         rights = ["Grant","View","ManageSession","Edit","Delete","AgentAuth","OfflineRescue","AddAccount","UnlockAccount","ManagementAssignment","RequestZoneRole"]
     }
 }
+
+# Register Centrify Connector to Centrify tenant
+resource "centrifyvault_vaultsystem" "windows" {
+  depends_on = [aws_instance.centrify_connector]
+  count = length(aws_instance.centrify_connector.*.id)
+
+  name = element(aws_instance.centrify_connector.*.name, count.index % 2)
+  fqdn = element(aws_instance.centrify_connector.*.public_ip, count.index % 2)
+  
+  computer_class = "Windows"
+  session_type = "Rdp"
+  description = "Centrify Connector provisioned by Terraform"
+  sets = [data.centrifyvault_manualset.centrify_connectors_set.id]
+
+  permission {
+      principal_id = data.centrifyvault_role.system_admin.id
+      principal_name = data.centrifyvault_role.system_admin.name
+      principal_type = "Role"
+      rights = ["Grant","View","ManageSession","Edit","Delete","AgentAuth","OfflineRescue","AddAccount","UnlockAccount","ManagementAssignment","RequestZoneRole"]
+  }
+}
