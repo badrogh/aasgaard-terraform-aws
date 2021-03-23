@@ -71,7 +71,7 @@ resource "centrifyvault_vaultsystem" "windows" {
   count = length(aws_instance.centrify_connector.*.id)
 
   name = element(aws_instance.centrify_connector.*.id, count.index % 2)
-  fqdn = element(aws_instance.centrify_connector.*.public_ip, count.index % 2)
+  fqdn = element(aws_instance.centrify_connector.*.private_ip, count.index % 2)
 
   computer_class = "Windows"
   session_type = "Rdp"
