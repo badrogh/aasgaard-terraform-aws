@@ -1,22 +1,22 @@
 resource "aws_instance" "centrify_connector" {
-  depends_on = [aws_nat_gateway.nat_gw_private, aws_subnet.vpc_private_subnets]
+  depends_on = [aws_subnet.vpc_public_subnets]
   
-  # Deploy 1 Centrify Connector per private subnet
-  count = length(aws_subnet.vpc_private_subnets.*.id)
+  # Deploy 1 Centrify Connector per public subnet so they can be used as RDP/SSH Gateways
+  count = length(aws_subnet.vpc_public_subnets.*.id)
   
   # Instance type
   ami = data.aws_ami.windows_ami.id
   instance_type = var.connector_instance_type
   
   # Network settings
-  subnet_id = element(aws_subnet.vpc_private_subnets.*.id, count.index % 2)
+  subnet_id = element(aws_subnet.vpc_public_subnets.*.id, count.index % 2)
   availability_zone = element(data.aws_availability_zones.available.names, count.index % 2)
   associate_public_ip_address = false
-  vpc_security_group_ids = [aws_security_group.centrify_connector_sg.id, aws_security_group.vpc_private_sg.id]
+  vpc_security_group_ids = [aws_security_group.centrify_connector_sg.id, aws_security_group.vpc_public_sg.id]
   
   # Security
   key_name = aws_key_pair.instance_key.key_name  
-  get_password_data = true  
+  get_password_data = true
   source_dest_check = false
 
   # User data
@@ -28,7 +28,7 @@ resource "aws_instance" "centrify_connector" {
   }
 
   tags = {
-    Name = "centrify-connector-${count.index}-${random_id.instance.hex}"
+    Name = "centrify-connector-${count.index}"
   }
 }
 
@@ -44,7 +44,7 @@ data "template_file" "centrify_connector_user_data" {
   }
 }
 
-# Create manual System Set
+# Create manual System Set for Centrify Connectors
 resource "centrifyvault_manualset" "centrify_connectors_set" {
     name = "Centrify Connectors"
     type = "Server"
@@ -63,9 +63,4 @@ resource "centrifyvault_manualset" "centrify_connectors_set" {
         principal_type = "Role"
         rights = ["Grant","View","ManageSession","Edit","Delete","AgentAuth","OfflineRescue","AddAccount","UnlockAccount","ManagementAssignment","RequestZoneRole"]
     }
-}
-
-# Used by creation of set
-data "centrifyvault_role" "system_admin" {
-    name = "System Administrator"
 }

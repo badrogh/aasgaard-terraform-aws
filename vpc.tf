@@ -4,7 +4,7 @@
 resource "aws_vpc" "vpc_name" {
   cidr_block = var.vpc_cidr_block
   tags = {
-    Name = "${var.vpc_name}-${random_id.instance.hex}"
+    Name = "${var.vpc_name}"
   }
 }
 
@@ -22,7 +22,7 @@ resource "aws_subnet" "vpc_public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "public-subnet-${count.index}-${random_id.instance.hex}"
+    Name = "subnet-public-${var.vpc_name}-${count.index}"
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_subnet" "vpc_private_subnets" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "private-subnet-${count.index}-${random_id.instance.hex}"
+    Name = "subnet-private-${var.vpc_name}-${count.index}"
   }
 }
 
@@ -45,7 +45,7 @@ resource "aws_internet_gateway" "vpc_igw" {
   vpc_id = aws_vpc.vpc_name.id
   
   tags = {
-    Name = "igw-${random_id.instance.hex}"
+    Name = "igw-${var.vpc_name}"
   }
 }
 
@@ -56,11 +56,15 @@ resource "aws_eip" "nat_private_ips" {
 }
 
 ### NAT gateways
-resource "aws_nat_gateway" "nat_gw_private" {
+resource "aws_nat_gateway" "nat_private" {
   depends_on = [aws_internet_gateway.vpc_igw]
   count = length(var.vpc_private_subnet_cidrs)
   allocation_id = element(aws_eip.nat_private_ips.*.id, count.index)
   subnet_id = element(aws_subnet.vpc_public_subnets.*.id, count.index)
+ 
+  tags = {
+    Name = "nat-${var.vpc_name}-${count.index}"
+  }
 }
 
 ### Routing tables
@@ -74,7 +78,7 @@ resource "aws_route_table" "igw_route_public" {
   }
   
   tags = {
-    Name = "public-internet-rt-${random_id.instance.hex}"
+    Name = "rt-public-internet-${var.vpc_name}"
   }
 }
 
@@ -84,11 +88,11 @@ resource "aws_route_table" "nat_route_private" {
   
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = element(aws_nat_gateway.nat_gw_private.*.id, count.index)
+    nat_gateway_id = element(aws_nat_gateway.nat_private.*.id, count.index)
   }
   
   tags = {
-    Name = "private-nat-rt-${count.index}-${random_id.instance.hex}"
+    Name = "rt-private-nat-${var.vpc_name}-${count.index}"
   }
 }
 
@@ -105,32 +109,6 @@ resource "aws_route_table_association" "vpc_private_routes" {
 }
 
 ### Security Groups
-resource "aws_security_group" "rdp_gateway_sg" {
-  name = "rdp_gateway_sg"
-  description = "RDP Gateway security group"
-  vpc_id = aws_vpc.vpc_name.id
-
-  ingress {
-    # allow RDP from anywhere
-	from_port = 3389
-    to_port = 3389
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    # allow all outbound traffic
-    from_port = "0"
-    to_port = "0"
-    protocol = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "rdp-gateway-sg-${random_id.instance.hex}"
-  }
-}
-
 resource "aws_security_group" "centrify_connector_sg" {
   name = "centrify_connector_sg"
   description = "Centrify Connector security group"
@@ -177,7 +155,7 @@ resource "aws_security_group" "centrify_connector_sg" {
   }
 
   tags = {
-    Name = "centrify-connector-sg-${random_id.instance.hex}"
+    Name = "Centrify Connector"
   }
 }
 
@@ -235,7 +213,7 @@ resource "aws_security_group" "vpc_public_sg" {
   }
 
   tags = {
-    Name = "public-sg-${random_id.instance.hex}"
+    Name = "Public Subnet"
   }
 }
 
@@ -293,6 +271,6 @@ resource "aws_security_group" "vpc_private_sg" {
   }
   
   tags = {
-    Name = "private-sg-${random_id.instance.hex}"
+    Name = "Private Subnet"
   }
 }

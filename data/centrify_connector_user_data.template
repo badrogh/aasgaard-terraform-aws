@@ -1,99 +1,107 @@
 <powershell>
-# Prepare temp folder and start transcript
-if (!(Test-Path "C:\Windows\Temp\Centrify\"))
-{
-	New-Item "C:\Windows\Temp\Centrify" -ItemType Directory | Out-Null
-}
-if (!(Test-Path "C:\Windows\Temp\Centrify\centrify_install.log"))
-{
-	New-Item "C:\Windows\Temp\Centrify\centrify_install.log" | Out-Null
-}
-Start-Transcript "C:\Windows\Temp\Centrify\centrify_install.log" -Append
 
-# Checking if Centrify Connector is installed
-if (!(Test-Path "HKLM:\SOFTWARE\Centrify\Cloud"))
-{
-	# Centrify Connector Installation
-	if (!(Test-Path "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"))
-	{
-		# Downloading package
-		Write-Output "> Downloading Centrify Connector Installer package..."
-		Invoke-WebRequest -UseBasicParsing -Uri "${package_url}" -OutFile "C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip"
-	}
-
-	if (!(Test-Path "C:\Windows\Temp\Centrify\*.exe"))
-	{
-		# Extracting package
-		Write-Output "> Extracting package..."
-		Add-Type -AssemblyName System.IO.Compression.FileSystem
-		[System.IO.Compression.ZipFile]::ExtractToDirectory("C:\Windows\Temp\Centrify\Centrify-Connector-Installer.zip", "C:\Windows\Temp\Centrify\")
-	}
-	
-	$InstallerFile = (Get-ChildItem -Path "C:\Windows\Temp\Centrify\*.exe" -File).FullName
-	Write-Output "> Running Centrify Connector Installer..."
-	Invoke-Expression "$InstallerFile /silent"
-
-	# Checking .NET Framework version - Note that Release 528040 is .NET 4.8
-	if ((Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\').Release -ge 528040)
-	{
-		# .NET Framework 4.8 or later is present
-		$t = 1
-		while ($true) 
-		{ 
-			Start-Sleep -Seconds 10
-			Write-Output ("Waiting for installation to finish... [{0:m\mss\s} elapsed]" -f [TimeSpan]::FromSeconds(10 * $t++))
-			# Break out if Installation complete
-			if (Test-Path "C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe")
-			{
-				Write-Output "> Installation complete"
-				break;
-			}
-			# Break out after 10 minutes to avoid infinite loop
-			if ($t -gt 60)
-			{
-				Write-Output "> Installation interrupted"
-				Stop-Transcript
-				exit;
-			}
-		}
-	}
-	else
-	{
-		# Installer will install .NET Framework 4.8
-		Write-Output "> Updating .NET Framework to version 4.8. Server will be restarted after .NET Framework upgrade and Centrify Connector installation will resume."
-	}
-}
-else
-{
-	# Centrify Connector already installed
-	Write-Output "> Centrify Connector is already installed. Skipping installation."
+# Check to see if already registered
+if((Get-Item "HKLM:\Software\Centrify\Cloud" -EA Ignore).Property -contains "proxyId") {
+    return
 }
 
-# Centrify Connector registration and service status
-if ((Get-Service | Where-Object { $_.Name -eq "adproxy" }).Count -gt 0)
-{
-	# Check if Centrify Connector is registered - Looking for Tenant ID in the format ABC1234
-	if ([String]::IsNullOrEmpty((Get-ItemProperty HKLM:\SOFTWARE\Centrify\Cloud\).ProxyId))
-	{
-		# Registering Centrify Connector
-		Write-Output "> Registering Centrify Connector against ${tenant_url}..."
-		& 'C:\Program Files\Centrify\Centrify Connector\Centrify.Cloud.ProxyRegisterCli.exe' url=${tenant_url} regcode=${reg_code}
-	}
+# Variables set by Terraform
+$RegUrl = ${tenant_url}
+$ProxyCode = ${reg_code}
+$DownloadUrl = ${package_url}
 
-	# Check Centrify Connector service status
-	if ((Get-Service adproxy).Status -eq "Running")
-	{
-		# Service is started
-		Write-Output "> Centrify Connector service is running."
-	}
-	else
-	{
-		# Start Service
-		Write-Output "> Starting Centrify Connector service..."
-		Start-Service adproxy
-	}
+$ConnectorHome = "C:\Program Files\Centrify\Centrify Connector"
+
+function Log([string] $message)
+{
+    Write-Output "$(Get-Date([datetime]::UtcNow) -Format `"yyyy-MM-dd HH:mm:ss`") $message"
 }
 
-Stop-Transcript
+function InstallRegisterAndStartConnector()
+{
+    # Install the connector.
+    $search = $tempDir + '\connector\*.exe'
+    $installer = (Get-ChildItem -Path $search -File).FullName
+    Log "Running the connector installer $installer"
+    Log "$installer /silent"
+    Invoke-Expression "$installer /silent"
+
+    # Wait for the installation to complete.
+    while (!(Test-Path "$ConnectorHome\Centrify.Cloud.ProxyRegisterCli.exe")) 
+    {
+        Log 'Waiting for the installer to finish...'
+        Start-Sleep -Seconds 10
+    }
+    Start-Sleep -Seconds 10
+
+    # Register the connector.
+    $token = Invoke-RestMethod -Headers @{"X-aws-ec2-metadata-token-ttl-seconds" = "21600"} -Method PUT -Uri http://169.254.169.254/latest/api/token
+    Log "Registering the connector against $RegUrl with reg code $ProxyCode"
+    $registrationLog = "$tempDir\connector_registration.log"
+    Write-Output "$ConnectorHome\Centrify.Cloud.ProxyRegisterCli.exe url=$RegUrl regcode=$ProxyCode" > "$registrationLog"
+    & "$ConnectorHome\Centrify.Cloud.ProxyRegisterCli.exe" url=$RegUrl regcode=$ProxyCode >> "$registrationLog" 2>&1
+    Log "$(Get-Content $registrationLog -Raw)"
+
+    # Start the connector service.
+    Log "Restarting the connector service."
+    Restart-Service adproxy
+
+    return
+}
+
+# Download the connector installer.
+function DownloadWithRetry([string] $url, [string] $downloadLocation, [int] $retries)
+{
+    while($true)
+    {
+        try
+        {
+            $ProgressPreference = 'SilentlyContinue'
+            Invoke-WebRequest $url -OutFile $downloadLocation
+            break
+        }
+        catch
+        {
+            $exceptionMessage = $_.Exception.Message
+            Log "Failed to download: $url : $exceptionMessage"
+            if ($retries -gt 0)
+            {
+                $retries--
+                Log "Waiting 10 seconds before retrying. Retries left: $retries"
+                Start-Sleep -Seconds 10
+            }
+            else
+            {
+                $exception = $_.Exception
+                throw $exception
+            }
+        }
+    }
+}
+
+# Create a temp directory and start logging.
+$tempDir = "c:\Windows\Temp\Centrify"
+New-Item -ItemType Directory -Path $tempDir -Force | out-null
+$logFile = "$tempDir\centrify-install-$(Get-Date -Format yyyy-MM-dd-HH-mm-ss).log"
+Start-Transcript $logFile
+
+# If we already downloaded the connector installer this must be a reboot for .NET 4.8 to finish installing, so now register and start the connector.
+if (Test-Path "$tempDir\connector_installer.zip") {
+    Log "Connector is already downloaded"
+    InstallRegisterAndStartConnector
+    return
+} 
+
+# Download the connector installer.
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+Log "Downloading the connector installer."
+DownloadWithRetry -url $DownloadUrl -downloadLocation "$tempDir\connector_installer.zip" -retries 5
+Log "Extracting the connector installer."
+New-Item -ItemType Directory -Path "$tempDir\connector"
+[System.IO.Compression.ZipFile]::ExtractToDirectory("$tempDir\connector_installer.zip", "$tempDir\connector")
+             
+# Install, register, and start the connector.
+InstallRegisterAndStartConnector
+
 </powershell>
 <persist>true</persist>

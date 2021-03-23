@@ -6,13 +6,21 @@ resource "tls_private_key" "instance_key_pair" {
 }
 
 resource "aws_key_pair" "instance_key" {
-  key_name   = "instance-key-${random_id.instance.hex}"
+  key_name   = "instance-key-${var.vpc_name}"
   public_key = tls_private_key.instance_key_pair.public_key_openssh
 }
 
-# Note that writing private key to ouutput folders only work with TerraformCLI executed locally
-# When using Terraform Cloud, private key is instead output in the console after Terraform apply
-resource "local_file" "instance_private_key" {
-  content  = tls_private_key.instance_key_pair.private_key_pem
-  filename = "${path.module}/output/instance_key.priv"
+# Private key is vaulted in Centrify tenant for accessibility to systems
+resource "centrifyvault_sshkey" "instance_private_key" {
+  name = "instance-key-${var.vpc_name}"
+  description = "AWS SSH Key pair"
+  private_key  = tls_private_key.instance_key_pair.private_key_pem
+  passphrase = ""
+  
+  permission {
+    principal_id = data.centrifyvault_role.system_admin.id
+    principal_name = data.centrifyvault_role.system_admin.name
+    principal_type = "Role"
+    rights = ["Grant","View","Edit","Delete","Retrieve"]
+  }
 }

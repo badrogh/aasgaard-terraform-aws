@@ -17,8 +17,8 @@ variable "aws_secret_key" {
 # You can edit default AWS region here 
 # You can edit or add CIDR blocks for both Public and Private subnets
 variable "vpc_name" {
-    description = "Demo VPC managed by Terraform"
-    default = "demo-vpc"
+    description = "Demo of a Terraform managed VPC"
+    default = "vpc-terraform-demo"
 }
 
 variable "aws_region" {
@@ -39,11 +39,6 @@ variable "vpc_public_subnet_cidrs" {
 variable "vpc_private_subnet_cidrs" {
     description = "Private Subnets CIDR for internally accessible resources"
     default = ["10.0.10.0/24", "10.0.20.0/24"]
-}
-
-variable "rdp_gateway_instance_type" {
-  description = "Instance type for RDP Gateway server"
-  default = "t2.micro"
 }
 
 ### Centrify variable
