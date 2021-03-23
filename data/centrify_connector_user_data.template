@@ -6,9 +6,9 @@ if((Get-Item "HKLM:\Software\Centrify\Cloud" -EA Ignore).Property -contains "pro
 }
 
 # Variables set by Terraform
-$RegUrl = ${tenant_url}
-$ProxyCode = ${reg_code}
-$DownloadUrl = ${package_url}
+$RegUrl = "${tenant_url}"
+$ProxyCode = "${reg_code}"
+$DownloadUrl = "${package_url}"
 
 $ConnectorHome = "C:\Program Files\Centrify\Centrify Connector"
 
