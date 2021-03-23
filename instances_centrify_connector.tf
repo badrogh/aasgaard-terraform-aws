@@ -11,7 +11,7 @@ resource "aws_instance" "centrify_connector" {
   # Network settings
   subnet_id = element(aws_subnet.vpc_public_subnets.*.id, count.index % 2)
   availability_zone = element(data.aws_availability_zones.available.names, count.index % 2)
-  associate_public_ip_address = false
+  associate_public_ip_address = true
   vpc_security_group_ids = [aws_security_group.centrify_connector_sg.id, aws_security_group.vpc_public_sg.id]
   
   # Security
