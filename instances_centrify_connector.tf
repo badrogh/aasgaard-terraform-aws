@@ -72,11 +72,11 @@ resource "centrifyvault_vaultsystem" "windows" {
 
   name = element(aws_instance.centrify_connector.*.name, count.index % 2)
   fqdn = element(aws_instance.centrify_connector.*.public_ip, count.index % 2)
-  
+
   computer_class = "Windows"
   session_type = "Rdp"
   description = "Centrify Connector provisioned by Terraform"
-  sets = [data.centrifyvault_manualset.centrify_connectors_set.id]
+  sets = [centrifyvault_manualset.centrify_connectors_set.id]
 
   permission {
       principal_id = data.centrifyvault_role.system_admin.id
