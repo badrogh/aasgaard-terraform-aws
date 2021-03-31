@@ -5,12 +5,17 @@
 # Note that both aws_access_key and aws_secret_key should always be variables set in your Terraform 
 # workspaces instead of using variables.tf file when using Terraform Cloud.
 # The aws_secret_access_key should always be set as Sensitive (write only)
+/*
 variable "aws_access_key" {
     description = "AWS access key"
 }
 
 variable "aws_secret_key" {
     description = "AWS secret access key"
+}
+*/
+variable "cloud_provider" {
+    description = "Centrify Cloud Provider name"
 }
 
 ### AWS VPC configuration
