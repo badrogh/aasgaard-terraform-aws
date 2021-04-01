@@ -24,6 +24,7 @@ data "centrifyvault_cloudprovider" "aws_account" {
 data "centrifyvault_vaultaccount" "aws_access_key" {
   name = "Terraform"
   cloudprovider_id = data.centrifyvault_cloudprovider.aws_account.id
+  checkout = true
 }
 
 data "centrifyvault_role" "system_admin" {
