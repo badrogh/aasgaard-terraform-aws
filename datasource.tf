@@ -23,11 +23,10 @@ data "centrifyvault_cloudprovider" "aws_account" {
 
 data "centrifyvault_vaultaccount" "aws_iam_user" {
   name = "Terraform"
-  cloudprovider_id = data.centrifyvault_cloudprovider.aws_account.id
 }
 
 data "centrifyvault_vaultaccount" "aws_access_key" {
-  access_key_id = data.centrifyvault_cloudprovider.aws_iam_user.id
+  access_key_id = data.centrifyvault_vaultaccount.aws_iam_user.id
   cloudprovider_id = data.centrifyvault_cloudprovider.aws_account.id
   checkout = true
 }
