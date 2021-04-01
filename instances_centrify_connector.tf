@@ -85,3 +85,25 @@ resource "centrifyvault_vaultsystem" "windows" {
       rights = ["Grant","View","ManageSession","Edit","Delete","AgentAuth","OfflineRescue","AddAccount","UnlockAccount","ManagementAssignment","RequestZoneRole"]
   }
 }
+
+resource "centrifyvault_vaultaccount" "local_admin" {
+  depends_on = [aws_instance.centrify_connector]
+  count = length(aws_instance.centrify_connector.*.id)
+
+  name = "Administrator"
+  credential_type = "Password"
+  host_id = element(aws_instance.centrify_connector.*.id, count.index % 2)
+  password = element(aws_instance.centrify_connector.*.password_data, count.index % 2)
+
+  use_proxy_account = false
+  managed = true
+  description = "Local administrator account"
+  #sets = [centrifyvault_manualset.centrify_connectors_set.id]
+
+  permission {
+      principal_id = data.centrifyvault_role.system_admin.id
+      principal_name = data.centrifyvault_role.system_admin.name
+      principal_type = "Role"
+      rights = ["Grant","View","ManageSession","Edit","Delete","AgentAuth","OfflineRescue","AddAccount","UnlockAccount","ManagementAssignment","RequestZoneRole"]
+  }
+}
