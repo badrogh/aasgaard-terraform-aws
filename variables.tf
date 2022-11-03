@@ -18,6 +18,10 @@ variable "cloud_provider" {
     description = "Centrify Cloud Provider name"
 }
 
+variable "cloud_provider_id" {
+    description = "Centrify Cloud Provider ID"
+}
+
 ### AWS VPC configuration
 # You can edit default AWS region here 
 # You can edit or add CIDR blocks for both Public and Private subnets
