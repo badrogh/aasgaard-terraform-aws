@@ -14,6 +14,10 @@ variable "aws_secret_key" {
     description = "AWS secret access key"
 }
 
+variable "cloud_provider" {
+    description = "Centrify Cloud Provider name"
+}
+
 ### AWS VPC configuration
 # You can edit default AWS region here 
 # You can edit or add CIDR blocks for both Public and Private subnets
