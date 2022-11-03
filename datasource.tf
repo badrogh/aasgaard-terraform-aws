@@ -19,6 +19,7 @@ data "aws_ami" "windows_ami" {
 ### Centrify Provider
 data "centrifyvault_cloudprovider" "aws_account" {
   name = var.cloud_provider
+  cloud_account_id = var.cloud_provider_id
 }
 
 data "centrifyvault_vaultaccount" "aws_access_key" {
